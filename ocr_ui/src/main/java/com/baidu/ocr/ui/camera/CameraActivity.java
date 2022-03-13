@@ -366,6 +366,7 @@ public class CameraActivity extends Activity {
         doConfirmResult();
     }
 
+    //确认图片
     private void doConfirmResult() {
         CameraThreadPool.execute(new Runnable() {
             @Override
