@@ -4,9 +4,11 @@
 package com.baidu.ocr.demo;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +37,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
         setContentView(R.layout.activity_main);
         alertDialog = new AlertDialog.Builder(this);
 
@@ -167,21 +173,40 @@ public class MainActivity extends AppCompatActivity {
         }, "aip.license", getApplicationContext());
     }
 
+
+    private void  alertTranslate(final String title, final String message) {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                alertDialog.setTitle(title)
+
+                        .setPositiveButton("确定", null)
+                        .setMessage(message)
+                        .show();
+            }
+        });
+    }
     private void alertText(final String title, final String message) {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 alertDialog.setTitle(title)
-                        .setMessage(message)
+
                         .setPositiveButton("确定", null)
+                        .setNegativeButton("翻译", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                alertTranslate("翻译",HTTPSocker.sendGet(message));
+                            }
+                        })
+                        .setMessage(message)
                         .show();
             }
         });
     }
-
     private void infoPopText(final String result) {
+        //alertText("", result);
         alertText("", result);
-      //  alertText("", HTTPSocker.sendGet(result);
     }
 
     @Override

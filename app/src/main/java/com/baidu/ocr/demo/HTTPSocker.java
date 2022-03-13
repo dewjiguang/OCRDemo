@@ -3,26 +3,22 @@
  */
 package com.baidu.ocr.demo;
 
-import com.baidu.idl.util.HttpClient;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 
 public class HTTPSocker {
@@ -31,7 +27,7 @@ public class HTTPSocker {
         byte[] digest = null;
         try {
             MessageDigest md5 = MessageDigest.getInstance("md5");
-            digest  = md5.digest(str.getBytes("utf-8"));
+            digest = md5.digest(str.getBytes("utf-8"));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
@@ -41,50 +37,144 @@ public class HTTPSocker {
         String md5Str = new BigInteger(1, digest).toString(16);
         return md5Str;
     }
-        /**
-         * 向指定URL发送GET方法的请求
-         *
-         *            请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
-         * @return URL 所代表远程资源的响应结果
-         */
-        public static String sendGet(String word) {
-            word="Welcome to beijing";
-            String result = "";
-            BufferedReader in = null;
-            String url ="http://api.fanyi.baidu.com/api/trans/vip/translate";
-            String appId ="20220313001122760";
-            String key ="j4bFzDXNdn1V9uWvbGOK";
-            String salt="1435660288";
-            String s = appId + word + salt + key;
-            String md5Str = getMD5Str(s);
 
+    public static String decodeUnicode(String theString) {
+        char aChar;
+        int len = theString.length();
+        StringBuffer outBuffer = new StringBuffer(len);
+        for (int x = 0; x < len;) {
+            aChar = theString.charAt(x++);
+            if (aChar == '\\') {
+                aChar = theString.charAt(x++);
+                if (aChar == 'u') {
+                    // Read the xxxx
+                    int value = 0;
+                    for (int i = 0; i < 4; i++) {
+                        aChar = theString.charAt(x++);
+                        switch (aChar) {
+                            case '0':
+                            case '1':
+                            case '2':
+                            case '3':
+                            case '4':
+                            case '5':
+                            case '6':
+                            case '7':
+                            case '8':
+                            case '9':
+                                value = (value << 4) + aChar - '0';
+                                break;
+                            case 'a':
+                            case 'b':
+                            case 'c':
+                            case 'd':
+                            case 'e':
+                            case 'f':
+                                value = (value << 4) + 10 + aChar - 'a';
+                                break;
+                            case 'A':
+                            case 'B':
+                            case 'C':
+                            case 'D':
+                            case 'E':
+                            case 'F':
+                                value = (value << 4) + 10 + aChar - 'A';
+                                break;
+                            default:
+                                throw new IllegalArgumentException(
+                                        "Malformed   \\uxxxx   encoding.");
+                        }
 
-            try {
-                String urlNameString = url + "?" + "q="+word+"&from=en&to=zh&appid="+appId+"&salt="+salt+"&sign="+md5Str;
-                URL realUrl = new URL(urlNameString);
+                    }
+                    outBuffer.append((char) value);
+                } else {
+                    if (aChar == 't')
+                        aChar = '\t';
+                    else if (aChar == 'r')
+                        aChar = '\r';
+                    else if (aChar == 'n')
+                        aChar = '\n';
+                    else if (aChar == 'f')
+                        aChar = '\f';
+                    outBuffer.append(aChar);
+                }
+            } else
+                outBuffer.append(aChar);
+        }
+        return outBuffer.toString();
+    }
+    public static String inputStream2StringNew(InputStream is) {
+        try {
+            ByteArrayOutputStream boa = new ByteArrayOutputStream();
+            int len = 0;
+            byte[] buffer = new byte[1024];
+
+            while ((len = is.read(buffer)) != -1) {
+                boa.write(buffer, 0, len);
+            }
+            is.close();
+            boa.close();
+            byte[] result = boa.toByteArray();
+
+            String temp = new String(result);
+
+            // 识别编码
+            if (temp.contains("utf-8")) {
+                return new String(result, "utf-8");
+            } else if (temp.contains("gb2312")) {
+                return new String(result, "gb2312");
+            } else {
+                return new String(result, "utf-8");
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * 向指定URL发送GET方法的请求
+     * <p>
+     * 请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
+     *
+     * @return URL 所代表远程资源的响应结果
+     */
+    public static String sendGet(String word) {
+        //word = "Welcome to beijing";
+        String result = "";
+        BufferedReader in = null;
+        String url = "http://api.fanyi.baidu.com/api/trans/vip/translate";
+        String appId = "20220313001122760";
+        String key = "j4bFzDXNdn1V9uWvbGOK";
+        String salt = "1435660288";
+        String s = appId + word + salt + key;
+        String md5Str = getMD5Str(s);
+        String realUrl = url + "?" + "q=" + word + "&from=en&to=zh&appid=" + appId + "&salt=" + salt + "&sign=" + md5Str;
+        try {
+                URL Url = new URL(realUrl);
                 // 打开和URL之间的连接
-                URLConnection connection = realUrl.openConnection();
+                URLConnection connection = Url.openConnection();
                 // 设置通用的请求属性
                 connection.setRequestProperty("accept", "*/*");
                 connection.setRequestProperty("connection", "Keep-Alive");
                 connection.setRequestProperty("user-agent",
                         "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-
                 // 建立实际的连接
                 connection.connect();
-                // 获取所有响应头字段
-                Map<String, List<String>> map = connection.getHeaderFields();
-                // 遍历所有的响应头字段
-                for (String i : map.keySet()) {
-                    System.out.println(i + "--->" + map.get(i));
-                }
-                // 定义 BufferedReader输入流来读取URL的响应
                 in = new BufferedReader(new InputStreamReader(
-                        connection.getInputStream()));
+                        connection.getInputStream(),"GB2312"));
                 String line;
+
+                //String test="{\"from\":\"en\",\"to\":\"zh\",\"trans_result\":[{\"src\":\"Welcome to beijing\",\"dst\":\"\\u6b22\\u8fce\\u6765\\u5230\\u5317\\u4eac\"}]}";
+                //String s1 = test.substring(test.indexOf("dst\":\""), test.indexOf("\"}]}")).replaceAll("dst\":\"", "");
+                //System.out.println(URLDecoder.decode(s1));
+                //String str = new String(test.getBytes()," ");
                 while ((line = in.readLine()) != null) {
                     result += line;
                 }
+                String test = decodeUnicode(result);
+               result=test.substring(test.indexOf("dst\":\""), test.indexOf("\"}]}")).replaceAll("dst\":\"", "");
             } catch (Exception e) {
                 System.out.println("发送GET请求出现异常！" + e);
                 e.printStackTrace();
@@ -102,63 +192,5 @@ public class HTTPSocker {
             return result;
         }
 
-        /**
-         * 向指定 URL 发送POST方法的请求
-         *
-         * @param url
-         *            发送请求的 URL
-         * @param param
-         *            请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
-         * @return 所代表远程资源的响应结果
-         */
-        public static String sendPost(String url, String param) {
-            PrintWriter out = null;
-            BufferedReader in = null;
-            String result = "";
-            try {
-                URL realUrl = new URL(url);
-                // 打开和URL之间的连接
-                URLConnection conn = realUrl.openConnection();
-                // 设置通用的请求属性
-                conn.setRequestProperty("accept", "*/*");
-                conn.setRequestProperty("connection", "Keep-Alive");
-                conn.setRequestProperty("user-agent",
-                        "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-                // 发送POST请求必须设置如下两行
-                conn.setDoOutput(true);
-                conn.setDoInput(true);
-                // 获取URLConnection对象对应的输出流
-                out = new PrintWriter(conn.getOutputStream());
-                // 发送请求参数
-                out.print(param);
-                // flush输出流的缓冲
-                out.flush();
-                // 定义BufferedReader输入流来读取URL的响应
-                in = new BufferedReader(
-                        new InputStreamReader(conn.getInputStream()));
-                String line;
-                while ((line = in.readLine()) != null) {
-                    result += line;
-                }
-            } catch (Exception e) {
-                System.out.println("发送 POST 请求出现异常！"+e);
-                e.printStackTrace();
-            }
-            //使用finally块来关闭输出流、输入流
-            finally{
-                try{
-                    if(out!=null){
-                        out.close();
-                    }
-                    if(in!=null){
-                        in.close();
-                    }
-                }
-                catch(IOException ex){
-                    ex.printStackTrace();
-                }
-            }
-            return result;
-        }
     }
 
