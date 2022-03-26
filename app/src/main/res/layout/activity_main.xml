@@ -11,10 +11,8 @@
     android:fadingEdge="vertical"
     style="@style/result_pop_scroll"
     >
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/activity_main"
+<RelativeLayout
+    android:id="@+id/activity_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -24,40 +22,43 @@
         android:orientation="vertical"
         android:baselineAligned="false">
 
-    <Button
-        android:text="通用文字识别"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/general_basic_button"
-        android:background="@drawable/button"
-        android:layout_margin="@dimen/rim_dimen_5dp"
-        tools:ignore="HardcodedText"/>
+<!--    <Button-->
+<!--        android:text="通用文字识别"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:id="@+id/general_basic_button"-->
+<!--        android:background="@drawable/button"-->
+<!--        android:layout_margin="@dimen/rim_dimen_5dp"-->
+<!--        tools:ignore="HardcodedText"/>-->
 
     <Button
-        android:text="通用文字识别(高精度版)"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/accurate_basic_button"
-        android:background="@drawable/button"
-        android:layout_margin="@dimen/rim_dimen_5dp"
-        tools:ignore="HardcodedText"/>
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="250dp"
+        android:background="@drawable/buttoncircle"
+        android:text="拍照/上传"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        tools:ignore="HardcodedText" />
 
 
-    <Button
-            android:text="通用文字识别（含生僻字版）"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/general_enhance_button"
-        android:background="@drawable/button"
-        android:layout_margin="@dimen/rim_dimen_5dp"
-            tools:ignore="HardcodedText"/>
-    <Button
-            android:text="网络图片文字识别"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/general_webimage_button"
-        android:background="@drawable/button"
-        android:layout_margin="@dimen/rim_dimen_5dp"
-            tools:ignore="HardcodedText"/>
-</LinearLayout>
+<!--    <Button-->
+<!--            android:text="通用文字识别（含生僻字版）"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:id="@+id/general_enhance_button"-->
+<!--        android:background="@drawable/button"-->
+<!--        android:layout_margin="@dimen/rim_dimen_5dp"-->
+<!--            tools:ignore="HardcodedText"/>-->
+<!--    <Button-->
+<!--            android:text="网络图片文字识别"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:id="@+id/general_webimage_button"-->
+<!--        android:background="@drawable/button"-->
+<!--        android:layout_margin="@dimen/rim_dimen_5dp"-->
+<!--            tools:ignore="HardcodedText"/>-->
+</RelativeLayout >
 </ScrollView>

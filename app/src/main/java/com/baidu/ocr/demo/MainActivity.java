@@ -45,20 +45,20 @@ public class MainActivity extends AppCompatActivity {
         alertDialog = new AlertDialog.Builder(this);
 
         // 通用文字识别
-        findViewById(R.id.general_basic_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!checkTokenStatus()) {
-                    return;
-                }
-                Intent intent = new Intent(MainActivity.this, CameraActivity.class);
-                intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH,
-                        FileUtil.getSaveFile(getApplicationContext()).getAbsolutePath());
-                intent.putExtra(CameraActivity.KEY_CONTENT_TYPE,
-                        CameraActivity.CONTENT_TYPE_GENERAL);
-                startActivityForResult(intent, REQUEST_CODE_GENERAL_BASIC);
-            }
-        });
+//        findViewById(R.id.general_basic_button).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (!checkTokenStatus()) {
+//                    return;
+//                }
+//                Intent intent = new Intent(MainActivity.this, CameraActivity.class);
+//                intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH,
+//                        FileUtil.getSaveFile(getApplicationContext()).getAbsolutePath());
+//                intent.putExtra(CameraActivity.KEY_CONTENT_TYPE,
+//                        CameraActivity.CONTENT_TYPE_GENERAL);
+//                startActivityForResult(intent, REQUEST_CODE_GENERAL_BASIC);
+//            }
+//        });
 
         // 通用文字识别(高精度版)
         findViewById(R.id.accurate_basic_button).setOnClickListener(new View.OnClickListener() {
@@ -76,38 +76,38 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        // 通用文字识别（含生僻字版）
-        findViewById(R.id.general_enhance_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!checkTokenStatus()) {
-                    return;
-                }
-                Intent intent = new Intent(MainActivity.this, CameraActivity.class);
-                intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH,
-                        FileUtil.getSaveFile(getApplicationContext()).getAbsolutePath());
-                intent.putExtra(CameraActivity.KEY_CONTENT_TYPE,
-                        CameraActivity.CONTENT_TYPE_GENERAL);
-                startActivityForResult(intent, REQUEST_CODE_GENERAL_ENHANCED);
-            }
-        });
-
-        // 网络图片识别
-        findViewById(R.id.general_webimage_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!checkTokenStatus()) {
-                    return;
-                }
-                Intent intent = new Intent(MainActivity.this, CameraActivity.class);
-                intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH,
-                        FileUtil.getSaveFile(getApplicationContext()).getAbsolutePath());
-                intent.putExtra(CameraActivity.KEY_CONTENT_TYPE,
-                        CameraActivity.CONTENT_TYPE_GENERAL);
-                startActivityForResult(intent, REQUEST_CODE_GENERAL_WEBIMAGE);
-            }
-        });
+//
+//        // 通用文字识别（含生僻字版）
+//        findViewById(R.id.general_enhance_button).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (!checkTokenStatus()) {
+//                    return;
+//                }
+//                Intent intent = new Intent(MainActivity.this, CameraActivity.class);
+//                intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH,
+//                        FileUtil.getSaveFile(getApplicationContext()).getAbsolutePath());
+//                intent.putExtra(CameraActivity.KEY_CONTENT_TYPE,
+//                        CameraActivity.CONTENT_TYPE_GENERAL);
+//                startActivityForResult(intent, REQUEST_CODE_GENERAL_ENHANCED);
+//            }
+//        });
+//
+//        // 网络图片识别
+//        findViewById(R.id.general_webimage_button).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (!checkTokenStatus()) {
+//                    return;
+//                }
+//                Intent intent = new Intent(MainActivity.this, CameraActivity.class);
+//                intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH,
+//                        FileUtil.getSaveFile(getApplicationContext()).getAbsolutePath());
+//                intent.putExtra(CameraActivity.KEY_CONTENT_TYPE,
+//                        CameraActivity.CONTENT_TYPE_GENERAL);
+//                startActivityForResult(intent, REQUEST_CODE_GENERAL_WEBIMAGE);
+//            }
+//        });
 
 
 
@@ -242,7 +242,15 @@ public class MainActivity extends AppCompatActivity {
                     new RecognizeService.ServiceListener() {
                         @Override
                         public void onResult(String result) {
-                            infoPopText(result);
+                            //infoPopText(result);
+                            Intent intent = new Intent(MainActivity.this, IDCardActivity.class);
+//                            intent.putExtra(CameraActivity.KEY_OUTPUT_FILE_PATH,
+//                                    FileUtil.getSaveFile(getApplicationContext()).getAbsolutePath());
+//                            intent.putExtra(CameraActivity.KEY_CONTENT_TYPE,
+//                                    CameraActivity.CONTENT_TYPE_GENERAL);
+
+                            intent.putExtra("msg",result);
+                             startActivityForResult(intent, REQUEST_CODE_ACCURATE_BASIC);
                         }
                     });
         }
